@@ -10,4 +10,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\VariacaoAtivo.Infra.Ioc\VariacaoAtivo.Infra.Ioc.csproj" />
+  </ItemGroup>
+
 </Project>
