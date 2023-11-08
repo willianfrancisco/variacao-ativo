@@ -17,7 +17,7 @@ namespace VariacaoAtivo.Infra.Data.Repositories
             _connectionString = configuration.GetConnectionString("AtivoConnectionString");
         }
 
-        public async Task AdicionarAtivos(Ativo ativo)
+        public async Task AdicionarAtivos(IEnumerable<Ativo> ativo)
         {
             using SqlConnection connection = new SqlConnection(_connectionString);
             await connection.BulkActionAsync(x => x.BulkInsert(ativo));
