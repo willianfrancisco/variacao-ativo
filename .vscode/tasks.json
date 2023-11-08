@@ -36,6 +36,66 @@
                 "${workspaceFolder}/src/VariacaoAtivo.sln"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "type": "docker-build",
+            "label": "docker-build: debug",
+            "dependsOn": [
+                "build"
+            ],
+            "dockerBuild": {
+                "tag": "variacaoativo:dev",
+                "target": "base",
+                "dockerfile": "${workspaceFolder}/src/VariacaoAtivo.UI/Dockerfile",
+                "context": "${workspaceFolder}",
+                "pull": true
+            },
+            "netCore": {
+                "appProject": "${workspaceFolder}/src/VariacaoAtivo.UI/VariacaoAtivo.UI.csproj"
+            }
+        },
+        {
+            "type": "docker-build",
+            "label": "docker-build: release",
+            "dependsOn": [
+                "build"
+            ],
+            "dockerBuild": {
+                "tag": "variacaoativo:latest",
+                "dockerfile": "${workspaceFolder}/src/VariacaoAtivo.UI/Dockerfile",
+                "context": "${workspaceFolder}",
+                "platform": {
+                    "os": "linux",
+                    "architecture": "amd64"
+                },
+                "pull": true
+            },
+            "netCore": {
+                "appProject": "${workspaceFolder}/src/VariacaoAtivo.UI/VariacaoAtivo.UI.csproj"
+            }
+        },
+        {
+            "type": "docker-run",
+            "label": "docker-run: debug",
+            "dependsOn": [
+                "docker-build: debug"
+            ],
+            "dockerRun": {},
+            "netCore": {
+                "appProject": "${workspaceFolder}/src/VariacaoAtivo.UI/VariacaoAtivo.UI.csproj",
+                "enableDebugging": true
+            }
+        },
+        {
+            "type": "docker-run",
+            "label": "docker-run: release",
+            "dependsOn": [
+                "docker-build: release"
+            ],
+            "dockerRun": {},
+            "netCore": {
+                "appProject": "${workspaceFolder}/src/VariacaoAtivo.UI/VariacaoAtivo.UI.csproj"
+            }
         }
     ]
 }

@@ -1,0 +1,39 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP.NET Core service.
+
+version: '3.4'
+
+services:
+  variacaoativoui:
+    image: variacaoativoui
+    build:
+      context: .
+      dockerfile: src/VariacaoAtivo.UI/Dockerfile
+    ports:
+      - 8080:8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    restart: always
+    depends_on:
+      - mssql
+
+  mssqldata:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    entrypoint: /bin/bash
+    restart: always
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - 1433:1433
+    volumes:
+      - /var/opt/mssql
+      - ./:/usr/src/app 
+    working_dir: /usr/src/app 
+    command: sh -c ' chmod +x ./entrypoint.sh; ./entrypoint.sh & /opt/mssql/bin/sqlservr;'
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: Password123!
+    volumes_from:
+      - mssqldata
+    restart: always
+
