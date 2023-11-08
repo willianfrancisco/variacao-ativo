@@ -18,7 +18,7 @@ namespace VariacaoAtivo.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<AtivoDTO>> PesquisarAtivos(string ativo = "PETR4.SA")
+        public async Task<IEnumerable<AtivoDTO>> PesquisarAtivos(string ativo)
         {
             // Consultar Api yahoo para recuperar os ativos
             // Passar os valore para a entidade Ativo.Valor
@@ -29,7 +29,7 @@ namespace VariacaoAtivo.Application.Services
             IEnumerable<AtivoDTO> ativosMontados = await MontaDadosAtivo(ativo);
             IEnumerable<Ativo> ativos = _mapper.Map<IEnumerable<Ativo>>(ativosMontados);
             await _ativoRepository.AdicionarAtivos(ativos);
-            return _mapper.Map<IEnumerable<AtivoDTO>>(_ativoRepository.PesquisarAtivos());
+            return _mapper.Map<IEnumerable<AtivoDTO>>(await _ativoRepository.PesquisarAtivos());
         }
 
         private async Task<IEnumerable<AtivoDTO>> MontaDadosAtivo(string ativo)
@@ -45,22 +45,22 @@ namespace VariacaoAtivo.Application.Services
                     {
                         Dia = i + 1,
                         DataCota = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day).ToString("dd/MM/yyyy"),
-                        Valor = Decimal.Round(valores.ElementAt(i), MidpointRounding.AwayFromZero),
+                        Valor = Math.Round(valores.ElementAt(i),2),
                         VariacaoDum = "-",
                         VariacaoPrimeiraData = "-"
                     };
                     ativos.Add(ativoDTO);
                 }else
                 {
-                    decimal variacaDmaisUm = (Decimal.Round(valores.ElementAt(i), MidpointRounding.AwayFromZero) - Decimal.Round(valores.ElementAt(i -1), MidpointRounding.AwayFromZero)/Decimal.Round(valores.ElementAt(i -1), MidpointRounding.AwayFromZero)*100);
-                    decimal variacaoPrimeiraData = (Decimal.Round(valores.ElementAt(i), MidpointRounding.AwayFromZero) - Decimal.Round(valores.ElementAt(0), MidpointRounding.AwayFromZero)/Decimal.Round(valores.ElementAt(0), MidpointRounding.AwayFromZero)*100);
+                    decimal variacaDmaisUm = (Math.Round(valores.ElementAt(i),2) - Math.Round(valores.ElementAt(i -1),2))/Math.Round(valores.ElementAt(i -1),2)*100;
+                    decimal variacaoPrimeiraData = (Math.Round(valores.ElementAt(i),2) - Math.Round(valores.ElementAt(0),2))/Math.Round(valores.ElementAt(0),2)*100;
                     AtivoDTO ativoDTO = new AtivoDTO
                     {
                         Dia = i + 1,
-                        DataCota = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day - i).ToString("dd/MM/yyyy"),
-                        Valor = Decimal.Round(valores.ElementAt(i), MidpointRounding.AwayFromZero),
-                        VariacaoDum = variacaDmaisUm.ToString("F"),
-                        VariacaoPrimeiraData = variacaoPrimeiraData.ToString("F")
+                        DataCota = DateTime.UtcNow.AddDays(-i).ToString("dd/MM/yyyy"),
+                        Valor = Math.Round(valores.ElementAt(i), 2),
+                        VariacaoDum = $"{variacaDmaisUm.ToString("F")}%",
+                        VariacaoPrimeiraData = $"{variacaoPrimeiraData.ToString("F")}%"
                     };
                     ativos.Add(ativoDTO);
                 }

@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VariacaoAtivo.Infra.Ioc\VariacaoAtivo.Infra.Ioc.csproj" />
+    <ProjectReference Include="..\VariacaoAtivo.Application\VariacaoAtivo.Application.csproj" />
   </ItemGroup>
 
 </Project>

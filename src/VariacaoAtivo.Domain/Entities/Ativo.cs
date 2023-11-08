@@ -1,5 +1,8 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace VariacaoAtivo.Domain.Entities
 {
+    [Table("Cota")]
     public class Ativo
     {
         public long Id { get; set; }
