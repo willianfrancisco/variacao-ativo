@@ -1,7 +1,4 @@
-CREATE DATABASE Ativos
-GO
-
-USE Ativos
+USE Ativos;
 
 CREATE TABLE Cota
 (

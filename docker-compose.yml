@@ -16,24 +16,16 @@ services:
     depends_on:
       - mssql
 
-  mssqldata:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    entrypoint: /bin/bash
-    restart: always
-
   mssql:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    ports:
-      - 1433:1433
-    volumes:
-      - /var/opt/mssql
-      - ./:/usr/src/app 
-    working_dir: /usr/src/app 
-    command: sh -c ' chmod +x ./entrypoint.sh; ./entrypoint.sh & /opt/mssql/bin/sqlservr;'
+    container_name: database
     environment:
-      ACCEPT_EULA: Y
-      SA_PASSWORD: Password123!
-    volumes_from:
-      - mssqldata
+      - "MSSQL_SA_PASSWORD=Password123!"
+      - "ACCEPT_EULA=Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./data:/var/opt/mssql/data
+      - ./scripts/:/docker-entrypoint-initdb.d
     restart: always
 
